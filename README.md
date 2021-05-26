@@ -2,8 +2,8 @@
 
 ## O simulador de gerencia de memória foi desenvolvido em Flutter (Dart) e é capaz de mostrar o funcionamento de um gerenciador de memória
 
-### O sistema possui três telas (Tabela de Páginas, Memória RAM e Memória ROM)
-### O algoritmo utilizado para gerenciar os blocos da Memória RAM foi o FIFO ( **First In - Firts Out** )
+O sistema possui três telas (Tabela de Páginas, Memória RAM e Memória ROM)
+O algoritmo utilizado para gerenciar os blocos da Memória RAM foi o FIFO ( **First In - Firts Out** )
 
 ---
 
