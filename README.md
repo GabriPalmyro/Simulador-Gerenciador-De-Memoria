@@ -1,5 +1,5 @@
-# Simulador de um Gerenciador de Memória<br />
-*(MMU - Memory Manager Unit)*
+# Simulador de um Gerenciador de Memória<br />*(MMU - Memory Manager Unit)*
+
 
 ## O simulador de gerencia de memória foi desenvolvido em Flutter (Dart) e é capaz de mostrar o funcionamento de um gerenciador de memória
 
