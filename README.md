@@ -1,16 +1,10 @@
-# mmu_sope
+# Simulador de um Gerenciador de Memória
 
-A new Flutter project.
+## O simulador de gerencia de memória foi desenvolvido em Flutter (Dart) e é capaz de mostrar o funcionamento de um gerenciador de memória
 
-## Getting Started
+### O sistema possui três telas (Tabela de Páginas, Memória RAM e Memória ROM)
+### O algoritmo utilizado para gerenciar os blocos da Memória RAM foi o FIFO ( **First In - Firts Out** )
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+[Link para Download do .exe do Gerenciador de Memória](https://drive.google.com/file/d/1YlUlz9x2ETs2lGJBZDFbpKHsEeaVj_Yi/view?usp=sharing)
