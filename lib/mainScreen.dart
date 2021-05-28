@@ -11,6 +11,19 @@ class _FirstScreenState extends State<FirstScreen> {
   int bitsEnderecamento = 1;
   int bitsOffset = 1;
   int blocosMemoria = 1;
+  int algoSel = 0;
+
+  setSelectedRadio(int val) {
+    setState(() {
+      algoSel = val;
+    });
+  }
+
+  @override
+  void initState() {
+    setSelectedRadio(1);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +151,57 @@ class _FirstScreenState extends State<FirstScreen> {
               ),
             ),
             Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                margin:
+                    EdgeInsets.symmetric(vertical: 24, horizontal: width * 0.1),
+                child: ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Radio(
+                          value: 1,
+                          groupValue: algoSel,
+                          activeColor: Colors.blue,
+                          onChanged: (val) {
+                            setSelectedRadio(val);
+                          },
+                        ),
+                        Text('FIFO',
+                            style: GoogleFonts.openSans(
+                                fontSize: 24,
+                                fontWeight: algoSel == 1
+                                    ? FontWeight.w700
+                                    : FontWeight.w500))
+                      ],
+                    ),
+                    SizedBox(
+                      width: 18,
+                    ),
+                    Row(
+                      children: [
+                        Radio(
+                          value: 2,
+                          groupValue: algoSel,
+                          activeColor: Colors.blue,
+                          onChanged: (val) {
+                            setSelectedRadio(val);
+                          },
+                        ),
+                        Text('LRU',
+                            style: GoogleFonts.openSans(
+                                fontSize: 24,
+                                fontWeight: algoSel == 2
+                                    ? FontWeight.w700
+                                    : FontWeight.w500))
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Align(
               alignment: Alignment.centerRight,
               child: Container(
                 margin:
@@ -151,7 +215,8 @@ class _FirstScreenState extends State<FirstScreen> {
                           arguments: {
                             'bitsEnderecamento': bitsEnderecamento,
                             'bitsOffset': bitsOffset,
-                            'blocosMemoria': blocosMemoria
+                            'blocosMemoria': blocosMemoria,
+                            'algoSel': algoSel
                           });
                     },
                     child: Row(

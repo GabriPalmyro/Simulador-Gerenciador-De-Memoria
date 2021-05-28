@@ -29,6 +29,7 @@ class _MMUHomeState extends State<MMUHome> {
   int bitsEnderecamento;
   int bitsOffset;
   int blocosMemoria;
+  int algoSel;
   int tamanhoTabela;
   int tamanhoRAM;
   int blocosUsando = 0;
@@ -49,7 +50,7 @@ class _MMUHomeState extends State<MMUHome> {
   List<String> titles = [
     '[MMU] Tabela de Páginas',
     'Memória RAM',
-    'Memória ROM'
+    'Disco Rígido (HD)'
   ];
 
   //funções
@@ -60,6 +61,7 @@ class _MMUHomeState extends State<MMUHome> {
     bitsEnderecamento = widget.args['bitsEnderecamento'];
     bitsOffset = widget.args['bitsOffset'];
     blocosMemoria = widget.args['blocosMemoria'];
+    algoSel = widget.args['algoSel'];
 
     //numero de bits do endereçamento elevado a 2 para o tam. Tabela
     tamanhoTabela = pow(2, bitsEnderecamento);
@@ -153,6 +155,19 @@ class _MMUHomeState extends State<MMUHome> {
     return int.parse(bin);
   }
 
+  bool validarInput() {
+    RegExp regex = new RegExp(r'^[0-1]+$');
+    if (regex.hasMatch(offsetBin.text) && regex.hasMatch(enderecoBin.text))
+      return true;
+    else
+      return false;
+  }
+
+  atualizarListaBlocos(int bloco) {
+    using.remove(bloco);
+    using.add(bloco);
+  }
+
   fifoAlgo() {
     int bloco;
     //se os blocos estiverem vazios
@@ -188,12 +203,15 @@ class _MMUHomeState extends State<MMUHome> {
 
         print('memoria RAM $blocoMaisVelho: ' +
             memoriaRAM[blocoMaisVelho].toString());
+
         //atualizar a linha onde o bloco da memoria RAM é copiado para a linha da ROM
+
         for (int i = 0; i < tamanhoRAM; i++) {
           setState(() {
             memoriaROM[tempPos][i] = memoriaRAM[blocoMaisVelho][i];
           });
         }
+
         print('memoria ROM $tempPos: ' + memoriaROM[tempPos].toString());
 
         setState(() {
@@ -201,6 +219,7 @@ class _MMUHomeState extends State<MMUHome> {
           tabelaPag[tempPos][0] = 'x'; //[0] pagina
           tabelaPag[tempPos][1] = '0'; //[1] ativa ou não
           tabelaPag[tempPos][2] = '0'; //[2] time in
+          tabelaPag[tempPos][3] = '0'; //[3] last acess time
         });
 
         // CLEAR DO BLOCO DA MEMORIA RAM
@@ -242,11 +261,16 @@ class _MMUHomeState extends State<MMUHome> {
   }
 
   atualizarTabela(int pos) {
-    int pagFifo = fifoAlgo();
+    int pagFifo;
+
+    //FIRST IN FIRST OUT
+    pagFifo = fifoAlgo();
+
     setState(() {
       tabelaPag[pos][0] = pagFifo.toString(); //[0] pagina
       tabelaPag[pos][1] = '1'; //[1] ativa ou não
-      tabelaPag[pos][2] = (f.format(DateTime.now())); //[2] time in
+      tabelaPag[pos][2] = (DateTime.now().toString()); //[2] time in
+      tabelaPag[pos][2] = (DateTime.now().toString()); //[3] last time acess
     });
     return pagFifo;
   }
@@ -273,6 +297,8 @@ class _MMUHomeState extends State<MMUHome> {
     }
     setState(() {
       memoriaRAM[pagFifo][offset] = '1';
+      tabelaPag[pos][3] = DateTime.now().toString();
+      if (algoSel == 2) atualizarListaBlocos(pagFifo);
     });
   }
 
@@ -292,6 +318,7 @@ class _MMUHomeState extends State<MMUHome> {
     //verificações
     if (int.parse(tabelaPag[pagV][1]) == 0) {
       //posição não estiver na memória
+
       atualizarRAM(false, pos: pagV, offset: offset);
     } else if (int.parse(tabelaPag[pagV][1]) == 1) {
       //posição estiver na memória
@@ -323,13 +350,13 @@ class _MMUHomeState extends State<MMUHome> {
             width: 18,
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: height * 0.05),
+            padding: EdgeInsets.symmetric(vertical: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 24),
+                  margin: EdgeInsets.symmetric(vertical: 12),
                   width: width * 0.2,
                   height: 50,
                   child: ElevatedButton(
@@ -345,7 +372,7 @@ class _MMUHomeState extends State<MMUHome> {
                       )),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 24),
+                  margin: EdgeInsets.symmetric(vertical: 12),
                   width: width * 0.2,
                   height: 50,
                   child: ElevatedButton(
@@ -361,7 +388,7 @@ class _MMUHomeState extends State<MMUHome> {
                       )),
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(vertical: 24),
+                  margin: EdgeInsets.symmetric(vertical: 12),
                   width: width * 0.2,
                   height: 50,
                   child: ElevatedButton(
@@ -372,7 +399,7 @@ class _MMUHomeState extends State<MMUHome> {
                         });
                       },
                       child: Text(
-                        'Visualizar memória ROM',
+                        'Visualizar HD',
                         style: GoogleFonts.openSans(),
                       )),
                 ),
@@ -414,8 +441,8 @@ class _MMUHomeState extends State<MMUHome> {
                 SizedBox(
                   height: 18,
                 ),
-                Text("Fila de blocos sendo utilizados",
-                    style: GoogleFonts.openSans(fontSize: 22)),
+                Text("Pilha de retirada",
+                    style: GoogleFonts.openSans(fontSize: 20)),
                 Container(
                     margin: EdgeInsets.symmetric(vertical: 12),
                     color: Colors.grey[200],
@@ -433,6 +460,9 @@ class _MMUHomeState extends State<MMUHome> {
                             child: Center(child: Text(using[index].toString())),
                           );
                         })),
+                SizedBox(
+                  height: 12,
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 12),
                   width: width * 0.2,
@@ -498,22 +528,37 @@ class _MMUHomeState extends State<MMUHome> {
                       SizedBox(
                         width: 24,
                       ),
-                      IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {
-                            if (selectedRadio == 1) {
-                              //binario
-                              addNovoEndVirtual(
-                                  enderecoBin.text + offsetBin.text);
-                              enderecoBin.clear();
-                              offsetBin.clear();
-                            } else if (selectedRadio == 2) {
-                              //decimal
-                              addNovoEndVirtual(decimalParaBinario(
-                                      int.parse(enderecoBin.text))
-                                  .toString());
-                            }
-                          })
+                      Container(
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.grey[600]),
+                            onPressed: () {
+                              if (offsetBin.text.isNotEmpty &&
+                                  enderecoBin.text.isNotEmpty &&
+                                  validarInput()) {
+                                if (selectedRadio == 1) {
+                                  //binario
+                                  addNovoEndVirtual(
+                                      enderecoBin.text + offsetBin.text);
+
+                                  enderecoBin.clear();
+                                  offsetBin.clear();
+                                } else if (selectedRadio == 2) {
+                                  //decimal
+                                  addNovoEndVirtual(decimalParaBinario(
+                                          int.parse(enderecoBin.text))
+                                      .toString());
+                                }
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            )),
+                      ),
                     ],
                   ),
                 ),
@@ -771,6 +816,15 @@ class TabelaPagTile extends StatefulWidget {
 
 class _TabelaPagTileState extends State<TabelaPagTile> {
   ScrollController _scrollControllerScrollbar = new ScrollController();
+  //date formatter
+  final f = new DateFormat('hh:mm:ss');
+
+  String dateFormat(String date) {
+    if (date != '0')
+      return f.format(DateTime.parse(date));
+    else
+      return '0';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -870,7 +924,30 @@ class _TabelaPagTileState extends State<TabelaPagTile> {
                                   fontWeight: FontWeight.w700),
                             ),
                             Text(
-                              widget.tabelaPag[index][2].toString(),
+                              dateFormat(widget.tabelaPag[index][2]),
+                              style: GoogleFonts.openSans(
+                                color: state == 1 ? Colors.white : Colors.black,
+                              ),
+                            )
+                          ],
+                        ),
+                        VerticalDivider(
+                          color: Colors.black,
+                          width: 5,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              'LAST ACESS TIME',
+                              style: GoogleFonts.openSans(
+                                  fontSize: 12,
+                                  color:
+                                      state == 1 ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                            Text(
+                              dateFormat(widget.tabelaPag[index][3]),
                               style: GoogleFonts.openSans(
                                 color: state == 1 ? Colors.white : Colors.black,
                               ),
