@@ -25,7 +25,7 @@ O algoritmo utilizado para gerenciar os blocos da Memória RAM foi o FIFO ( **Fi
 
 ---
 # Tela 4
-#### Tela da Memória ROM
+#### Tela do Disco Rígido
 ![alt text](https://github.com/GabriPalmyro/Simulador-Gerenciador-De-Memoria/blob/master/assets/telaROM.png)
 
 [Link para Download do .exe do Gerenciador de Memória](https://drive.google.com/file/d/1YlUlz9x2ETs2lGJBZDFbpKHsEeaVj_Yi/view?usp=sharing)
